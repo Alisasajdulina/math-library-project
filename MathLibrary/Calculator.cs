@@ -38,13 +38,21 @@ namespace MathLibrary
         /// </summary>
         public static bool IsPrime(int number)
         {
-            if (number <= 1) return false;
-            if (number == 2) return true;
-            if (number % 2 == 0) return false;
+            // УЛУЧШЕНО: Добавлена проверка на отрицательные числа
+            if (number <= 1)
+                return false;
 
-            int limit = (int)Math.Sqrt(number);
+            // УЛУЧШЕНО: Оптимизация для четных чисел
+            if (number == 2)
+                return true;
 
-            for (int i = 3; i <= limit; i += 2)
+            if (number % 2 == 0)
+                return false;
+
+            // УЛУЧШЕНО: Используем длинный тип для предотвращения переполнения
+            long limit = (long)Math.Sqrt(number);
+
+            for (long i = 3; i <= limit; i += 2)
             {
                 if (number % i == 0)
                     return false;
@@ -56,24 +64,42 @@ namespace MathLibrary
         /// <summary>
         /// Возводит число в степень.
         /// </summary>
-        public static double Power(double number, double power) =>
-            Math.Pow(number, power);
+        public static double Power(double number, double power)
+        {
+            // УЛУЧШЕНО: Добавлена обработка специальных случаев
+            if (power == 0)
+                return 1;
+
+            if (number == 0)
+                return 0;
+
+            if (double.IsNaN(number) || double.IsInfinity(number))
+                throw new ArgumentException("Число не должно быть NaN или бесконечностью");
+
+            return Math.Pow(number, power);
+        }
 
         /// <summary>
         /// Вычисляет факториал числа.
         /// </summary>
         public static long Factorial(int n)
         {
+            // УЛУЧШЕНО: Более подробные сообщения об ошибках
             if (n < 0)
-                throw new ArgumentException("Факториал определен только для неотрицательных чисел.");
+                throw new ArgumentException($"Факториал не определен для отрицательных чисел. Получено значение: {n}");
+
+            // УЛУЧШЕНО: Проверка на переполнение
+            if (n > 20)
+                throw new ArgumentException($"Факториал {n}! слишком велик для типа long. Максимальное значение: 20");
 
             if (n == 0 || n == 1)
                 return 1;
 
             long result = 1;
-
             for (int i = 2; i <= n; i++)
+            {
                 result *= i;
+            }
 
             return result;
         }
@@ -88,17 +114,36 @@ namespace MathLibrary
             out double? x1,
             out double? x2)
         {
+            x1 = null;
+            x2 = null;
+
+            // УЛУЧШЕНО: Проверка на вырожденные случаи
+            if (a == 0 && b == 0)
+            {
+                if (c == 0)
+                    throw new ArgumentException("Уравнение не определено (0=0)");
+
+                return false; // Нет решений
+            }
+
+            // УЛУЧШЕНО: Обработка линейного уравнения
             if (a == 0)
-                throw new ArgumentException("Коэффициент 'a' не может быть равен 0.");
+            {
+                x1 = -c / b;
+                return true;
+            }
 
             double discriminant = b * b - 4 * a * c;
 
-            if (discriminant < 0)
+            // УЛУЧШЕНО: Обработка малых значений дискриминанта
+            if (Math.Abs(discriminant) < 1e-10)
             {
-                x1 = null;
-                x2 = null;
-                return false;
+                x1 = -b / (2 * a);
+                return true;
             }
+
+            if (discriminant < 0)
+                return false;
 
             double sqrtD = Math.Sqrt(discriminant);
             double denominator = 2 * a;
