@@ -108,5 +108,44 @@ namespace MathLibrary
 
             return true;
         }
+
+        // ============= НОВЫЕ МЕТОДЫ =============
+
+        /// <summary>
+        /// Вычисляет площадь круга по радиусу.
+        /// </summary>
+        /// <param name="radius">Радиус круга</param>
+        /// <returns>Площадь круга</returns>
+        public static double CircleArea(double radius)
+        {
+            if (radius < 0)
+                throw new ArgumentException("Радиус не может быть отрицательным.");
+
+            return Math.PI * radius * radius;
+        }
+
+        /// <summary>
+        /// Конвертирует температуру из Цельсия в Фаренгейты.
+        /// </summary>
+        /// <param name="celsius">Температура в градусах Цельсия</param>
+        /// <returns>Температура в градусах Фаренгейта</returns>
+        public static double CelsiusToFahrenheit(double celsius)
+        {
+            return celsius * 9 / 5 + 32;
+        }
+
+        /// <summary>
+        /// Вычисляет гипотенузу по двум катетам.
+        /// </summary>
+        /// <param name="a">Первый катет</param>
+        /// <param name="b">Второй катет</param>
+        /// <returns>Длина гипотенузы</returns>
+        public static double Hypotenuse(double a, double b)
+        {
+            if (a <= 0 || b <= 0)
+                throw new ArgumentException("Катеты должны быть положительными числами.");
+
+            return Math.Sqrt(a * a + b * b);
+        }
     }
 }
